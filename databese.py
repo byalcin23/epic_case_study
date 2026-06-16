@@ -34,7 +34,7 @@ def init_db():
         with conn.cursor() as cur:
             cur.execute(query)
             conn.commit()
-    return print("DB init completed, table is ready.")
+    print("DB init completed, table is ready.")
 
 def save_pet_to_db(pet_id, name, status, category, char_count):
     query = """
@@ -46,5 +46,5 @@ def save_pet_to_db(pet_id, name, status, category, char_count):
         with conn.cursor() as cur:
             cur.execute(query, (pet_id, name, status, category, char_count))
             if cur.rowcount > 0:
-                print(f"[DB] Yeni kayıt eklendi: {pet_id} - {name}")
+                print(f"[DB] New record inserted: {pet_id} - {name}")
             conn.commit()

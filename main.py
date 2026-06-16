@@ -1,5 +1,5 @@
-from epic_case_study.api import fetch_available_pets
-from epic_case_study.databese import get_connection, init_db, save_pet_to_db
+from api import fetch_available_pets
+from databese import init_db, save_pet_to_db
 # import fetch_available_pets.py databese.py 
 
 
@@ -10,11 +10,10 @@ def main():
     pets_data = fetch_available_pets()
     print("Initialize database...")
     
-    message = init_db() # Initialize the database and create the table if it doesn't exist 
-    print(message)
+    init_db() # Initialize the database and create the table if it doesn't exist
     
     match_count = 1
-    # FFiltering
+    # Filtering
     for pet in pets_data:
         name = pet.get("name")
         
