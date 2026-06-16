@@ -1,0 +1,18 @@
+FROM python:3.11-slim
+
+# Work directory 
+WORKDIR /app
+
+# copy requirements.txt and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . .
+
+# Create a non-root user and change ownership of the application directory
+RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+# Uygulamayı başlatıyoruz
+CMD ["python", "main.py"]
