@@ -12,7 +12,6 @@ def main():
     
     init_db() # Initialize the database and create the table if it doesn't exist
     
-    match_count = 1
     # Filtering
     for pet in pets_data:
         name = pet.get("name")
@@ -22,8 +21,6 @@ def main():
             category_name = pet.get("category", {}).get("name", "Unknown")
             char_count = len(name)
             
-            # CMD output for debugging and verification
-            print("{0}".format(match_count))
             print("The {0} {1} has {2} characters".format(category_name, name, char_count))
             
             # Db CALL HERE: save_pet_to_db(pet['id'], name, pet['status'], category_name, char_count)
@@ -31,8 +28,5 @@ def main():
             save_pet_to_db(pet['id'], name, pet['status'], category_name, char_count)
             # 
             # 
-            
-            match_count += 1
-
 if __name__ == "__main__":
     main()

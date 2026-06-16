@@ -18,8 +18,8 @@ services:
       - app-network
 
   app:
-    image: bahadir23/epic_petstore_api:v001
-    restart: unless-stopped
+    image: bahadir23/epic_petstore_api:v002
+    restart: on-failure
     depends_on:
       db:
         condition: service_healthy
