@@ -34,6 +34,8 @@ services:
 
   api-tests:
     image: postman/newman:alpine
+    profiles:
+      - test
     command: run /etc/newman/petstore_collection.json --working-dir /etc/newman
     volumes:
       - ./postman:/etc/newman
