@@ -7,7 +7,7 @@ The application fetches pets with `available` status, filters pets whose name st
 ## Quick Start
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/byalcin23/epic_case_study.git
 cd epic_case_study
 docker compose up
 ```
