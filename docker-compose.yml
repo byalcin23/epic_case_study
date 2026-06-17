@@ -32,6 +32,14 @@ services:
     networks:
       - app-network
 
+  api-tests:
+    image: postman/newman:alpine
+    command: run /etc/newman/petstore_collection.json --working-dir /etc/newman
+    volumes:
+      - ./postman:/etc/newman
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

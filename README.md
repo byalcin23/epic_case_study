@@ -19,6 +19,18 @@ docker compose up
 
 The app waits until PostgreSQL is healthy before starting.
 
+## API Tests
+
+The Postman/Newman test suite is under `postman/`.
+
+Run it with:
+
+```bash
+docker compose run --rm api-tests
+```
+
+The collection covers the `/pet` endpoints from the Swagger Petstore API, including successful requests, status code checks, response checks, invalid requests, and basic negative scenarios.
+
 ## What It Stores
 
 The `pets` table contains:

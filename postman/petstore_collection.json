@@ -1,0 +1,645 @@
+{
+  "info": {
+    "_postman_id": "643b032c-90a1-4422-a3bf-9d7a1054f373",
+    "name": "Swagger Petstore - Pet API Tests",
+    "description": "Automated tests for all endpoints under /pet in the Swagger Petstore API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51740534",
+    "_collection_link": "https://go.postman.co/collection/51740534-643b032c-90a1-4422-a3bf-9d7a1054f373?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Add pet",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const petId = Number(`77${Date.now().toString().slice(-10)}`);",
+              "pm.collectionVariables.set('petId', petId);",
+              "pm.collectionVariables.set('petName', `EpicPet-${petId}`);",
+              "pm.collectionVariables.set('tagName', 'epic-case-study');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response contains created pet data', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('object');",
+              "    pm.expect(Number(json.id)).to.eql(Number(pm.collectionVariables.get('petId')));",
+              "    pm.expect(json.name).to.eql(pm.collectionVariables.get('petName'));",
+              "    pm.expect(json.status).to.eql('available');",
+              "    pm.expect(json.photoUrls).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": {{petId}},\n  \"category\": {\n    \"id\": 100,\n    \"name\": \"case-study\"\n  },\n  \"name\": \"{{petName}}\",\n  \"photoUrls\": [\n    \"https://example.com/pet.jpg\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 100,\n      \"name\": \"{{tagName}}\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get pet by ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//response status check",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "//response body check",
+              "pm.test('Response matches the created pet', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('object');",
+              "    pm.expect(Number(json.id)).to.eql(Number(pm.collectionVariables.get('petId')));",
+              "    pm.expect(json).to.have.property('name');",
+              "    pm.expect(json).to.have.property('status');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "packages": {},
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{petId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "{{petId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update pet",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response contains updated pet data', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('object');",
+              "    pm.expect(Number(json.id)).to.eql(Number(pm.collectionVariables.get('petId')));",
+              "    pm.expect(json.name).to.eql('EpicPetUpdated');",
+              "    pm.expect(json.status).to.eql('sold');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": {{petId}},\n  \"category\": {\n    \"id\": 100,\n    \"name\": \"case-study\"\n  },\n  \"name\": \"EpicPetUpdated\",\n  \"photoUrls\": [\n    \"https://example.com/pet-updated.jpg\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 100,\n      \"name\": \"{{tagName}}\"\n    }\n  ],\n  \"status\": \"sold\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update pet with form data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is an API response object', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('object');",
+              "    pm.expect(json).to.have.property('code');",
+              "    pm.expect(json).to.have.property('message');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "name",
+              "value": "EpicPetFormUpdated",
+              "type": "text"
+            },
+            {
+              "key": "status",
+              "value": "pending",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{petId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "{{petId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find pets by status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is an array of pets', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array'); // expect response as array",
+              "    json.slice(0, 10).forEach(function (pet) {  //check firts 10 pet have id and status",
+              "        pm.expect(pet).to.have.property('id');",
+              "        pm.expect(pet).to.have.property('status');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/findByStatus?status=available",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "findByStatus"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "available"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find pets by tags",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "packages": {},
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/findByTags?tags={{tagName}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "findByTags"
+          ],
+          "query": [
+            {
+              "key": "tags",
+              "value": "{{tagName}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Upload pet image metadata",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is an API response object', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('object');",
+              "    pm.expect(json).to.have.property('code');",
+              "    pm.expect(json).to.have.property('message');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "packages": {},
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "additionalMetadata",
+              "value": "case-study-test-upload",
+              "type": "text"
+            },
+            {
+              "key": "file",
+              "type": "file",
+              "src": "pet-image.txt"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{petId}}/uploadImage",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "{{petId}}",
+            "uploadImage"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete pet",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is an API response object', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('object');",
+              "    pm.expect(json).to.have.property('code');",
+              "    pm.expect(json).to.have.property('message');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "api_key",
+            "value": "special-key"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{petId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "{{petId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get deleted pet - negative scenario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('NEGATIVE CHECK: Deleted pet is not found', function () {",
+              "    pm.expect([404]).to.include(pm.response.code);",
+              "});",
+              "",
+              "pm.test('NEGATIVE CHECK: Error response contains a message when JSON is returned', function () {",
+              "        const json = pm.response.json();",
+              "        pm.expect(json).to.be.an('object');",
+              "        pm.expect(json).to.have.property('message');",
+              "",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{petId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "{{petId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get pet with invalid ID - negative scenario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('NEGATIVE CHECK: Invalid ID returns an error status', function () {",
+              "    pm.expect([400, 404]).to.include(pm.response.code);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/not-a-number",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "not-a-number"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Find pets by invalid status - negative scenario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "",
+              "//For the invalid status scenario, the public Petstore API returns 200 with an empty JSON response instead of a strict 400 error. Because of that, the test accepts both 200 and 400 as handled responses, but it would fail on unexpected server errors like 500.",
+              "pm.test('NEGATIVE CHECK: Invalid status request', function () {",
+              "    pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "",
+              "",
+              "pm.test('NEGATIVE CHECK: Response is valid JSON', ",
+              "    function () {",
+              "    pm.response.to.be.json;",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/findByStatus?status=not-a-valid-status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            "findByStatus"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "not-a-valid-status"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "//Affacts all postman collection checking each methot tests under 5 second",
+          "pm.test('Response time is below 5000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://petstore.swagger.io/v2"
+    },
+    {
+      "key": "petId",
+      "value": "0"
+    },
+    {
+      "key": "petName",
+      "value": "EpicPet"
+    },
+    {
+      "key": "tagName",
+      "value": "epic-case-study"
+    }
+  ]
+}
