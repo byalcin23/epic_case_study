@@ -2,46 +2,37 @@
 
 Small Python service for the Swagger Petstore API.
 
-The app fetches pets with `available` status, keeps the ones whose name starts with `M`, prints the required message, and stores the selected records in PostgreSQL.
+The application fetches pets with `available` status, filters pets whose name starts with `M`, prints the required message, and stores selected records in PostgreSQL.
 
-## Images
-
-- Database: `postgres:15` from the official Docker Hub repository
-- App: `bahadir23/epic_petstore_api:v002` from my public Docker Hub repository
-
-No local image build is required. The project can be started directly with Docker Compose.
-
-## Run
+## Quick Start
 
 ```bash
+git clone <repository-url>
+cd epic_case_study
 docker compose up
 ```
 
-The app waits until PostgreSQL is healthy before starting.
+No local build is required. The application image is public on Docker Hub:
 
-## API Tests
+```text
+bahadir23/epic_petstore_api:v002
+```
+
+The database uses the official PostgreSQL image:
+
+```text
+postgres:15
+```
+
+## Run API Tests
 
 The Postman/Newman test suite is under `postman/`.
-
-Run it with:
 
 ```bash
 docker compose run --rm api-tests
 ```
 
-The collection covers the `/pet` endpoints from the Swagger Petstore API, including successful requests, status code checks, response checks, invalid requests, and basic negative scenarios.
-
-## What It Stores
-
-The `pets` table contains:
-
-- `id`
-- `name`
-- `status`
-- `pet_category`
-- `name_character_count`
-
-Duplicate records are prevented by using the Petstore `id` as the primary key.
+The collection covers the Swagger Petstore `/pet` endpoints, including successful requests, status code checks, response validation, invalid requests, and basic negative scenarios.
 
 ## Database
 
@@ -51,15 +42,15 @@ PostgreSQL data is stored in a named Docker volume:
 postgres-data
 ```
 
-This keeps the database data between normal `up` / `down` runs.
+This keeps the data between normal `up` and `down` runs.
 
-To inspect the data:
+Inspect records:
 
 ```bash
 docker compose exec db psql -U appuser -d appdb -c "SELECT * FROM pets LIMIT 20;"
 ```
 
-To check duplicates:
+Check duplicate records:
 
 ```bash
 docker compose exec db psql -U appuser -d appdb -c "SELECT id, COUNT(*) FROM pets GROUP BY id HAVING COUNT(*) > 1;"
@@ -67,10 +58,56 @@ docker compose exec db psql -U appuser -d appdb -c "SELECT id, COUNT(*) FROM pet
 
 No rows returned means no duplicate records.
 
-## Project Files
+## Project Structure
 
 - `main.py` - application flow
 - `api.py` - Swagger Petstore API call
 - `databese.py` - PostgreSQL connection and insert logic
-- `docker-compose.yml` - app, database, network, healthcheck, and volume setup
+- `postman/` - Postman/Newman API test collection
+- `docker-compose.yml` - app, database, network, healthcheck, volume, and API test setup
 - `Dockerfile` - image definition used for publishing the app image
+
+## Generic Questions
+
+### 1. Docker vs Kubernetes deployment
+
+Docker Compose is simpler and mostly used for local or small environments. It starts the defined containers on one Docker host.
+
+Kubernetes is a container orchestration platform. From a deployment point of view, it gives better options for scaling, self-healing, rolling updates, service discovery, config management, and running workloads across multiple nodes.
+
+### 2. What problem does Docker Compose solve?
+
+Docker Compose makes it easy to run a multi-container application with one file and one command. In this project, the app, database, network, volume, healthcheck, and API test runner are described in `docker-compose.yml`.
+
+In Kubernetes, the same idea is handled with manifests such as `Deployment`, `Service`, `ConfigMap`, `Secret`, `PersistentVolumeClaim`, and `Job`.
+
+### 3. Logs, metrics, and traces
+
+Logs are application or system events written as text. They are useful for understanding what happened at a specific moment.
+
+Metrics are numeric measurements over time, such as request count, error rate, CPU usage, memory usage, or response time.
+
+Traces show the path of a request across services. They help understand where time is spent and where a request failed in a distributed system.
+
+### 4. Idempotency
+
+Idempotency means running the same operation multiple times has the same final result as running it once.
+
+It is important because deployments, retries, API calls, and database operations can happen more than once. Idempotent behavior makes systems safer and more predictable. In this project, duplicate database records are prevented by using the Petstore `id` as the primary key and `ON CONFLICT (id) DO NOTHING`.
+
+### 5. Production considerations
+
+For production, I would avoid hardcoded database credentials and move them to secrets or environment-specific configuration.
+
+I would also consider:
+
+- using a private or controlled container registry
+- adding CI/CD pipeline steps for build, test, scan, and deployment
+- improving logging and monitoring
+- adding application healthchecks
+- running more than one application replica
+- using a managed or replicated PostgreSQL setup
+- defining backup and restore procedures
+- adding reverse proxy or ingress configuration
+- setting resource limits and restart policies
+- reviewing network access, credentials, and image security
